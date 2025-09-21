@@ -24,7 +24,7 @@ class TaskListPage extends StatelessWidget {
 
   static final _demoTasks = [
     {
-      'title': 'Prepare for Rose Ann Presentation',
+      'title': 'Prepare for Rose Ann Presentation (Updated)',
       'description': 'Finalize slides and practice with Rose Ann.',
       'priority': 'High',
       'dueDate': 'Today',
