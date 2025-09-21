@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'widgets/icon_label.dart';
 import 'widgets/task_card.dart';
+import 'widgets/icon_label.dart';
 
 void main() {
   runApp(const TaskApp());
@@ -13,9 +13,7 @@ class TaskApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Task App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const TaskListPage(),
     );
   }
@@ -24,35 +22,62 @@ class TaskApp extends StatelessWidget {
 class TaskListPage extends StatelessWidget {
   const TaskListPage({super.key});
 
+  static final _demoTasks = [
+    {
+      'title': 'Prepare for Rose Ann Presentation',
+      'description': 'Finalize slides and practice with Rose Ann.',
+      'priority': 'High',
+      'dueDate': 'Today',
+      'assignee': 'Rose Ann'
+    },
+    {
+      'title': 'AppDev Quiz Review',
+      'description': 'Study and subnetting notes.',
+      'priority': 'Medium',
+      'dueDate': 'Tomorrow',
+      'assignee': 'Joy'
+    },
+    {
+      'title': 'Flutter UI Cleanup',
+      'description': 'Refactor and clean up the app code.',
+      'priority': 'Low',
+      'dueDate': 'Friday',
+      'assignee': 'Richie Ann'
+    },
+    {
+      'title': 'Software Engineering Quiz',
+      'description':
+          'Read chapters 4–6 and review lecture notes for the SE quiz.',
+      'priority': 'High',
+      'dueDate': 'Next Tuesday',
+      'assignee': 'Self'
+    },
+    {
+      'title': 'Professional Communication Report',
+      'description':
+          'Write and format the final report for the ProffCom subject.',
+      'priority': 'Medium',
+      'dueDate': 'Next Thursday',
+      'assignee': 'Team'
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Tasks'),
-      ),
-      body: ListView(
-        children: const [
-          TaskCard(
-            title: 'Prepare for Rose Ann\'s Presentation',
-            description:
-                'Finalize the slides and practice the script with Rose Ann before the meeting.',
-          ),
-          TaskCard(
-            title: 'Networking Quiz Review',
-            description:
-                'Study IPv6 and subnetting notes for the quiz tomorrow.',
-          ),
-          TaskCard(
-            title: 'Flutter UI Cleanup',
-            description:
-                'Refactor and clean up the app code before pushing to the repository.',
-          ),
-          TaskCard(
-            title: 'Coffee Break with Rose Ann',
-            description:
-                'Meet Rose Ann at the cafe after class to plan the next project.',
-          ),
-        ],
+      appBar: AppBar(title: const Text('My Tasks')),
+      body: ListView.builder(
+        itemCount: _demoTasks.length,
+        itemBuilder: (context, i) {
+          final t = _demoTasks[i];
+          return TaskCard(
+            title: t['title']!,
+            description: t['description']!,
+            priority: t['priority']!,
+            dueDate: t['dueDate'],
+            assignee: t['assignee'],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAddModal(context),
@@ -68,6 +93,7 @@ class TaskListPage extends StatelessWidget {
       builder: (_) {
         String? selectedPriority = 'High';
         final titleController = TextEditingController();
+        final descController = TextEditingController();
 
         return Padding(
           padding: EdgeInsets.only(
@@ -91,13 +117,16 @@ class TaskListPage extends StatelessWidget {
                     decoration: const InputDecoration(labelText: 'Title'),
                   ),
                   const SizedBox(height: 8),
+                  TextField(
+                    controller: descController,
+                    decoration: const InputDecoration(labelText: 'Description'),
+                  ),
+                  const SizedBox(height: 8),
                   DropdownButton<String>(
                     value: selectedPriority,
                     items: ['High', 'Medium', 'Low']
-                        .map((p) => DropdownMenuItem(
-                              value: p,
-                              child: Text(p),
-                            ))
+                        .map((p) =>
+                            DropdownMenuItem(value: p, child: Text(p)))
                         .toList(),
                     onChanged: (v) => setState(() => selectedPriority = v),
                   ),
@@ -106,8 +135,9 @@ class TaskListPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('(UI-only) Task created'),
+                        SnackBar(
+                          content: Text(
+                              '(UI-only) Task created with $selectedPriority priority'),
                         ),
                       );
                     },
